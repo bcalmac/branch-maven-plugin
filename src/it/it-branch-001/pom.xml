@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>localdomain.localhost</groupId>
+  <artifactId>it-branch</artifactId>
+  <packaging>pom</packaging>
+  <version>1.2.3-SNAPSHOT</version>
+  <properties>
+    <lib1.version>1.0-SNAPSHOT</lib1.version>
+    <lib2.version>2.0-SNAPSHOT</lib2.version>
+    <lib3.version>3.0-SNAPSHOT</lib3.version>
+    <lib4.version>4.0-SNAPSHOT</lib4.version>
+  </properties>
+  <modules>
+    <module>module</module>
+  </modules>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>localdomain.localhost</groupId>
+        <artifactId>branch-lib1</artifactId>
+        <version>${lib1.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>localdomain.localhost</groupId>
+        <artifactId>branch-lib2</artifactId>
+        <version>${lib2.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

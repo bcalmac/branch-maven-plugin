@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -7,14 +7,15 @@
     <version>40</version>
   </parent>
 
-  <artifactId>versions-maven-plugin</artifactId>
-  <version>2.4-SNAPSHOT</version>
+  <groupId>com.clearcapital.maven.plugins</groupId>
+  <artifactId>cc-branch-maven-plugin</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Versions Maven Plugin</name>
+  <name>Branch Maven Plugin</name>
   <url>http://www.mojohaus.org/versions-maven-plugin/</url>
   <description>
-    Versions Plugin for Maven. The Versions Plugin updates the versions of components in the POM.
+    Branch Plugin for Maven. The Branch Plugin re-writes SNAPSHOT versions to include a branch name when appropriate.
   </description>
   <inceptionYear>2008</inceptionYear>
   <licenses>
@@ -80,18 +81,18 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:git:https://github.com/mojohaus/versions-maven-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/mojohaus/versions-maven-plugin.git</developerConnection>
-    <url>https://github.com/mojohaus/versions-maven-plugin</url>
+    <connection>scm:git:https://github.com/bcalmac/branch-maven-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/bcalmac/branch-maven-plugin.git</developerConnection>
+    <url>https://github.com/bcalmac/branch-maven-plugin</url>
     <tag>HEAD</tag>
   </scm>
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/mojohaus/versions-maven-plugin/issues/</url>
+    <url>https://github.com/bcalmac/branch-maven-plugin/issues/</url>
   </issueManagement>
 
   <properties>
-    <mojo.java.target>1.5</mojo.java.target>
+    <mojo.java.target>1.8</mojo.java.target>
     <mavenVersion>2.2.1</mavenVersion>
     <wagonVersion>2.12</wagonVersion>
     <doxiaVersion>1.4</doxiaVersion>
@@ -100,14 +101,38 @@
     <sitePluginVersion>3.3</sitePluginVersion>
   </properties>
 
+  <distributionManagement>
+    <repository>
+      <id>artifactory</id>
+      <name>artifactory-releases</name>
+      <url>http://artifactory.clearcollateral.com:18080/artifactory/libs-release-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>artifactory</id>
+      <name>artifactory-snapshots</name>
+      <url>http://artifactory.clearcollateral.com:18080/artifactory/libs-snapshot-local</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <dependencies>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>21.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.6.2</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <version>3.5</version>
       <scope>provided</scope>
     </dependency>
-  
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
@@ -217,6 +242,12 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
       <version>1.7.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>google-collections</artifactId>
+          <groupId>com.google.collections</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -321,7 +352,7 @@
         <artifactId>animal-sniffer-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>check-java15</id>
+            <id>check-java18</id>
             <phase>test</phase>
             <goals>
               <goal>check</goal>
@@ -329,7 +360,7 @@
             <configuration>
               <signature>
                 <groupId>org.codehaus.mojo.signature</groupId>
-                <artifactId>java15</artifactId>
+                <artifactId>java18</artifactId>
                 <version>1.0</version>
               </signature>
             </configuration>
@@ -513,6 +544,42 @@
           </plugin>
         </plugins>
       </reporting>
+    </profile>
+    <profile>
+      <!-- runs one hardcoded IT -->
+      <id>run-one-it</id>
+      <build>
+        <defaultGoal>verify</defaultGoal>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>one-integration-test</id>
+                <goals>
+                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <pomIncludes>
+                    <pomInclude>it-branch-001/pom.xml</pomInclude>
+                  </pomIncludes>
+                  <showErrors>true</showErrors>
+                  <streamLogs>false</streamLogs>
+                  <debug>false</debug>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
