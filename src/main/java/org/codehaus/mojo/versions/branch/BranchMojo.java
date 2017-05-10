@@ -95,7 +95,7 @@ public class BranchMojo extends AbstractVersionsUpdaterMojo {
             return;
         }
 
-        trimmedBranch = truncateBranch(trimPath(branch));
+        trimmedBranch = sanitizeBranch(truncateBranch(trimPath(branch)));
         getLog().info("Branch parameter " + branch + " was trimmed to " + trimmedBranch + " for use inside the version.");
 
         String oldVersion = project.getVersion();
@@ -267,11 +267,15 @@ public class BranchMojo extends AbstractVersionsUpdaterMojo {
         }
     }
 
-    private static String truncateBranch(String branch) {
+    static String truncateBranch(String branch) {
         return BranchHelper.find(branch, JIRA_ID_PATTERN).orElse(StringUtils.left(branch, 10));
     }
 
-    private static String trimPath(String branch) {
+    static String sanitizeBranch(String branch) {
+        return branch.replaceAll("[^\\w-]", "");
+    }
+
+    static String trimPath(String branch) {
         return branch.replaceFirst(".*/", "");
     }
 
