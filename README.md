@@ -5,7 +5,7 @@ Based on the infrastructure provided by the Versions plugin (see below), the Bra
 The plugin would typically be invoked in the CI environment (Jenkins) before building the project. When invoked from Jenkins, the branch is available as `$GIT_BRANCH`.
  
 ```
-mvn com.clearcapital.maven.plugins:cc-branch-maven-plugin:1.0:branch -D branch=origin/CCP-1234
+mvn com.clearcapital.maven.plugins:cc-branch-maven-plugin:1.0.0:branch -D branch=origin/CCP-1234
 ```
 
 Below is the original description of the Versions plugin.
